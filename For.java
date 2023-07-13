@@ -1,6 +1,5 @@
 public class For{
     public static void main(String[] args) {
-        System.out.println(6.7 / 2);
         for(int i = 1;i<10;i++){
             for(int j = 1;j<i+1;j++){
                 System.out.print(i + " * " + j + " = " + i*j + ";" + "\t\t");
@@ -8,6 +7,8 @@ public class For{
             System.out.println("\n");
         }
 
+        ForArray ff = new ForArray();
+        System.out.println(ff);
     }
 }
 
