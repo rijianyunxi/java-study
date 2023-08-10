@@ -3,8 +3,11 @@ public class SClass {
         Animal cat = new Animal();
         cat.name="hua~";
         cat.say("miao miao");
+        int res = cat.calc(10,100);
+        System.out.println(res);
     }
 }
+
 
 
 class Animal{
@@ -13,5 +16,8 @@ class Animal{
 
     public void say(String word){
         System.out.println(this.name+"说"+word);
+    }
+    public int calc(int m , int n){
+        return m + n;
     }
 }
