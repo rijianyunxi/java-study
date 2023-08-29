@@ -1,5 +1,8 @@
 public class SClass {
     public static void main(String[] args) {
+        J k = new J("宋金涛",25);
+        k.say();
+
         Animal cat = new Animal();
         cat.name="hua~";
         cat.say("miao miao");
@@ -21,3 +24,18 @@ class Animal{
         return m + n;
     }
 }
+
+class J{
+    String name;
+    int age;
+//    public J(){}
+    public  J(String name,int age){
+        this.name  = name;
+        this.age = age;
+    }
+
+    public void say(){
+        System.out.println(this.name+"====say");
+    }
+}
+
