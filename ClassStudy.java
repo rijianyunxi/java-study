@@ -8,15 +8,17 @@ public class ClassStudy {
 //        p1.calc(1);
         Person p1 = new Person("sjt",11,21.1);
         Person p2 = new Person("p2",11,21.1);
-        p1 = p2;
-        p1.info();
-        p1.changeInfo(p1);
-        System.out.println("-----");
-        p1.info();
-        Change change = new Change();
-        change.c(p1);
-        System.out.println("-----");
-        p1.info();
+        int num = p1.eatAllApple(1);
+        System.out.println(num);
+//        p1 = p2;
+//        p1.info();
+//        p1.changeInfo(p1);
+//        System.out.println("-----");
+//        p1.info();
+//        Change change = new Change();
+//        change.c(p1);
+//        System.out.println("-----");
+//        p1.info();
 
     }
 
@@ -30,6 +32,10 @@ class Person{
         this.name = name;
         this.age = age;
         this.source = source;
+    }
+    public int eatAllApple(int day){
+        if(day == 10) return 1;
+        return (eatAllApple(day+1) + 1)*2;
     }
     public void info(){
         System.out.println("info:"+this.name);
@@ -51,5 +57,10 @@ class Change{
     public void c(Person p){
 //        p.name = "change by c";
         p = null;
+        log();
+    }
+
+    public void log(){
+        System.out.println("+++66+++");
     }
 }
