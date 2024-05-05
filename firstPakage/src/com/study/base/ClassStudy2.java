@@ -66,7 +66,8 @@ class Person{
 
         }
     }
-//    静态方法，不实例也可使用
+
+    //    静态方法，不实例也可使用
     public static String staticMethods(){
 //        eatAllApple(1); 不能放问非静态属性和方法
         staticMethods2();//静态的方法和属性可以
@@ -94,4 +95,44 @@ class Change{
     public void log(){
         System.out.println("+++66+++");
     }
+}
+
+
+
+//抽象类
+abstract class Abstract1{
+    public int count = 1;
+    public abstract  void see();
+    public abstract void write();
+}
+
+class Child extends Abstract1{
+    public String name;
+    public Child(String name) {
+        this.name = name;
+    }
+
+    //    super();
+//    继承抽象类必须实现其抽象方法
+    @Override
+    public void see() {
+        System.out.println("see"+this.count);
+    }
+
+    @Override
+    public void write() {
+        System.out.println("writing");
+    }
+}
+
+class Check{
+    Change c = new Change();
+//    Abstract1 a = new Abstract1();   抽象类不能实例
+    Child s = new Child("sjt");
+//    System.out.print(s);
+//    s.name = "lll";
+//    s.see();
+//    s.write();
+
+
 }
