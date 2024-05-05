@@ -1,4 +1,6 @@
-public class SClass {
+package com.study.base;
+
+public class ClassStudy {
     public static void main(String[] args) {
         J k = new J("宋金涛",25);
         k.say();
@@ -28,7 +30,7 @@ class Animal{
 class J{
     String name;
     int age;
-//    public J(){}
+    //    public J(){}
     public  J(String name,int age){
         this.name  = name;
         this.age = age;
@@ -38,4 +40,3 @@ class J{
         System.out.println(this.name+"====say");
     }
 }
-

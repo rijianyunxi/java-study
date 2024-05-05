@@ -1,9 +1,11 @@
+package com.study.base;
+
 /**
  * p无论传给谁了，也仅仅是将值赋予给了参数p ，p再赋值不影响原来空间的p，除非直接用p修改
  *
  *
  * */
-public class ClassStudy {
+public class ClassStudy2 {
     public static void main(String[] args){
 //        p1.calc(1);
         Person p1 = new Person("sjt",11,21.1);

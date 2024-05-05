@@ -1,3 +1,7 @@
+package com.study.base;
+
+import java.util.Scanner;
+
 /**
  * java输出hello word
  *public static void main(String[] args) 固定写法
@@ -62,5 +66,23 @@ class Parse{
         boolean b1 = Boolean.parseBoolean("true");
         byte b = Byte.parseByte(str);
         System.out.println(i1+" "+l1+" "+s1+" "+f1+" "+d1+" "+b1+" "+b);
+    }
+}
+
+
+class Scan {
+    public static void main(String[] args) {
+//        System.out.println(2&3);
+//        System.out.println(2|3);
+        Scanner scan = new Scanner(System.in);
+        System.out.println("请输入姓名：");
+        String content = scan.next();
+        System.out.println("请输入薪资");
+        double salary = scan.nextDouble();
+        if(salary > 10000){
+            System.out.println(content + "," + salary + ",牛逼！");
+        }else{
+            System.out.println("阿欧...");
+        }
     }
 }
