@@ -1,0 +1,31 @@
+### 启动应用后发送此请求（支持 .http 的 IDE 可直接运行）
+GET http://localhost:8080/api/hello
+Accept: application/json
+
+### 帖子列表：公共响应的 data 是包含 18 个 {id, title} 对象的数组
+GET http://localhost:8080/api/list
+Accept: application/json
+
+### 传参演示 1：@RequestParam 读取 ? 后面的查询参数
+### name 必传；page 未传时默认 1；keyword 可选
+GET http://localhost:8080/api/demo/query?name=小明&keyword=照片
+Accept: application/json
+
+### 传参演示 2：@PathVariable 读取 URL 路径中的参数
+GET http://localhost:8080/api/demo/files/123
+Accept: application/json
+
+### 传参演示 3：@RequestBody 将 JSON 请求体转换成 CreateFolderRequest
+POST http://localhost:8080/api/demo/folders
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "学习资料",
+  "parentId": 0
+}
+
+### 传参演示 4：@RequestHeader 读取请求头；不传 X-Client-Name 则返回 anonymous
+GET http://localhost:8080/api/demo/header
+X-Client-Name: web-client
+Accept: application/json

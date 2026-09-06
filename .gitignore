@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Maven build output
+**/target/
+
+# IntelliJ IDEA local project settings
+**/.idea/
+*.iml
+
+# Java compilation and local logs
+*.class
+*.log

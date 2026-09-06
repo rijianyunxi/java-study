@@ -1,0 +1,11 @@
+# Maven 构建产物
+/target/
+# IDE / 系统文件
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+.DS_Store
+*.log

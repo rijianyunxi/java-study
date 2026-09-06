@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cloud-drive-server
+
+server:
+  # 入门项目默认只监听本机，避免意外暴露到局域网或公网。
+  address: 127.0.0.1
+  port: 8080

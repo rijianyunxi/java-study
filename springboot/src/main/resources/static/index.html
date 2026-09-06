@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CloudDrive Spring Boot API 本地接口测试页">
+    <title>CloudDrive · API 测试台</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #e4e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #047857;
+            --error: #b42318;
+            --code: #111827;
+            --shadow: 0 12px 32px rgba(18, 32, 66, .08);
+            --radius: 14px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-width: 320px;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 12% 0%, #dbeafe 0, transparent 27rem),
+                radial-gradient(circle at 88% 0%, #e0e7ff 0, transparent 24rem),
+                var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        .shell { max-width: 1220px; margin: 0 auto; padding: 42px 24px 56px; }
+
+        .hero { display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+        .eyebrow { color: var(--primary); font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+        h1 { margin: 7px 0 10px; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.04em; }
+        .subtitle { max-width: 720px; margin: 0; color: var(--muted); line-height: 1.7; }
+        .server-status {
+            flex: 0 0 auto; display: flex; gap: 8px; align-items: center; padding: 10px 13px;
+            border: 1px solid var(--border); border-radius: 999px; background: rgba(255,255,255,.82); font-size: 13px;
+        }
+        .status-dot { width: 9px; height: 9px; border-radius: 50%; background: #98a2b3; }
+        .status-dot.success { background: #10b981; box-shadow: 0 0 0 4px rgba(16,185,129,.13); }
+        .status-dot.error { background: #ef4444; box-shadow: 0 0 0 4px rgba(239,68,68,.13); }
+
+        .notice {
+            padding: 14px 16px; margin-bottom: 26px; border: 1px solid #bfdbfe; border-radius: 11px;
+            color: #1e40af; background: #eff6ff; font-size: 14px; line-height: 1.65;
+        }
+        .notice code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+        .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, .92fr); gap: 24px; align-items: start; }
+        .test-grid { display: grid; gap: 16px; }
+        .card, .console { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+        .card { padding: 20px; }
+        .card-head { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; margin-bottom: 15px; }
+        .card h2 { margin: 0; font-size: 17px; }
+        .card p { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+        .method {
+            padding: 4px 8px; border-radius: 5px; background: #e8f1ff; color: #1d4ed8;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; font-weight: 800;
+        }
+        .method.post { background: #ecfdf3; color: #047857; }
+        .route { margin: 12px 0 16px; color: #344054; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+
+        form, .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+        label { display: grid; gap: 6px; min-width: 110px; flex: 1 1 145px; color: #475467; font-size: 12px; font-weight: 650; }
+        input {
+            width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid #d0d5dd; border-radius: 8px;
+            outline: none; color: var(--text); background: #fff; font: inherit; font-size: 14px;
+        }
+        input:focus { border-color: #7aa7ff; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        button {
+            min-height: 38px; padding: 8px 13px; border: 0; border-radius: 8px; color: #fff;
+            background: var(--primary); cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; transition: .15s ease;
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        button:disabled { opacity: .58; cursor: wait; transform: none; }
+        button.secondary { border: 1px solid #d0d5dd; color: #344054; background: #fff; }
+        button.secondary:hover { background: #f9fafb; }
+
+        .console { position: sticky; top: 20px; overflow: hidden; }
+        .console-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .console-title { font-size: 15px; font-weight: 750; }
+        .result-state { color: var(--muted); font-size: 12px; }
+        .result-state.success { color: var(--success); }
+        .result-state.error { color: var(--error); }
+        .section-label { display: block; margin: 15px 16px 7px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        pre {
+            min-height: 90px; max-height: 282px; overflow: auto; margin: 0 16px 16px; padding: 13px;
+            border-radius: 9px; color: #e5edf9; background: var(--code); font: 12px/1.62 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            white-space: pre-wrap; overflow-wrap: anywhere;
+        }
+        .tips { margin: 0 16px 16px; padding: 12px; border-radius: 9px; background: #f8fafc; color: var(--muted); font-size: 12px; line-height: 1.65; }
+        .tips strong { color: #344054; }
+
+        @media (max-width: 880px) {
+            .shell { padding: 28px 16px 40px; }
+            .hero { flex-direction: column; gap: 14px; }
+            .layout { grid-template-columns: 1fr; }
+            .console { position: static; order: -1; }
+        }
+    </style>
+</head>
+<body>
+<main class="shell">
+    <header class="hero">
+        <div>
+            <div class="eyebrow">CloudDrive / Spring Boot 2.x</div>
+            <h1>API 本地测试台</h1>
+            <p class="subtitle">在浏览器中直接调用当前 Spring Boot 服务，观察请求中的参数如何被 Controller 注解解析，再查看实际 JSON 响应。</p>
+        </div>
+        <div class="server-status" aria-live="polite">
+            <span id="status-dot" class="status-dot"></span>
+            <span id="status-text">等待调用</span>
+        </div>
+    </header>
+
+    <div class="notice">
+        页面和接口来自同一个本地服务，因此使用相对路径调用，例如 <code>/api/demo/query</code>，不需要配置 CORS。
+        可以先填写表单并点击“发送请求”，然后观察右侧的请求与响应。
+    </div>
+
+    <div class="layout">
+        <section class="test-grid" aria-label="接口测试表单">
+            <article class="card">
+                <div class="card-head">
+                    <div><h2>欢迎接口</h2><p>最简单的 GET 请求：没有参数，返回固定 JSON。</p></div>
+                    <span class="method">GET</span>
+                </div>
+                <div class="route">/api/hello</div>
+                <div class="actions"><button type="button" data-simple-url="/api/hello">发送请求</button></div>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div><h2>帖子列表</h2><p>观察 <code>data</code> 为数组时的响应结构。</p></div>
+                    <span class="method">GET</span>
+                </div>
+                <div class="route">/api/list</div>
+                <div class="actions"><button type="button" data-simple-url="/api/list">发送请求</button></div>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div><h2><code>@RequestParam</code> 查询参数</h2><p>参数位于 URL 的 <code>?</code> 后面，例如 <code>?name=小明&amp;page=2</code>。</p></div>
+                    <span class="method">GET</span>
+                </div>
+                <div class="route">/api/demo/query</div>
+                <form id="query-form">
+                    <label>name（必传）<input name="name" value="小明" required></label>
+                    <label>page（默认 1）<input name="page" type="number" min="1" placeholder="不填则使用 1"></label>
+                    <label>keyword（可选）<input name="keyword" value="照片"></label>
+                    <button type="submit">发送请求</button>
+                </form>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div><h2><code>@PathVariable</code> 路径参数</h2><p>参数位于 URL 路径中，例如 <code>/files/123</code>。</p></div>
+                    <span class="method">GET</span>
+                </div>
+                <div class="route">/api/demo/files/{id}</div>
+                <form id="path-form">
+                    <label>文件 id<input name="id" type="number" min="1" value="123" required></label>
+                    <button type="submit">发送请求</button>
+                </form>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div><h2><code>@RequestBody</code> JSON 请求体</h2><p>POST 请求将 JSON 解析为 <code>CreateFolderRequest</code> DTO。</p></div>
+                    <span class="method post">POST</span>
+                </div>
+                <div class="route">/api/demo/folders</div>
+                <form id="body-form">
+                    <label>文件夹名称<input name="name" value="学习资料" required></label>
+                    <label>父文件夹 id<input name="parentId" type="number" value="0" required></label>
+                    <button type="submit">发送请求</button>
+                </form>
+            </article>
+
+            <article class="card">
+                <div class="card-head">
+                    <div><h2><code>@RequestHeader</code> 请求头</h2><p>将自定义请求头 <code>X-Client-Name</code> 发送给服务端。</p></div>
+                    <span class="method">GET</span>
+                </div>
+                <div class="route">/api/demo/header</div>
+                <form id="header-form">
+                    <label>X-Client-Name<input name="clientName" value="web-client" placeholder="不填则使用 anonymous"></label>
+                    <button type="submit">发送请求</button>
+                </form>
+            </article>
+        </section>
+
+        <aside class="console" aria-label="请求和响应结果">
+            <div class="console-head">
+                <span class="console-title">请求结果</span>
+                <button id="clear-button" type="button" class="secondary">清空</button>
+            </div>
+            <span class="section-label">请求</span>
+            <pre id="request-output">选择左侧任意接口，然后点击“发送请求”。</pre>
+            <span class="section-label">响应</span>
+            <pre id="response-output">等待响应…</pre>
+            <div class="tips">
+                <strong>学习提示：</strong>请求 URL、请求头、JSON 请求体分别是不同位置的数据；Spring 通过对应的注解把它们解析成 Controller 方法参数。
+            </div>
+        </aside>
+    </div>
+</main>
+
+<script>
+    (function () {
+        const requestOutput = document.getElementById('request-output');
+        const responseOutput = document.getElementById('response-output');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('status-dot');
+        const clearButton = document.getElementById('clear-button');
+
+        function pretty(value) {
+            return typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+        }
+
+        function showStatus(text, state) {
+            statusText.textContent = text;
+            statusDot.className = 'status-dot' + (state ? ' ' + state : '');
+        }
+
+        function requestDescription(method, url, headers, body) {
+            let output = method + ' ' + url;
+            if (Object.keys(headers).length > 0) {
+                output += '\n\nHeaders:\n' + pretty(headers);
+            }
+            if (body !== undefined) {
+                output += '\n\nBody:\n' + pretty(body);
+            }
+            return output;
+        }
+
+        async function callApi(method, url, options) {
+            const settings = options || {};
+            const headers = Object.assign({ 'Accept': 'application/json' }, settings.headers || {});
+            const body = settings.body;
+            requestOutput.textContent = requestDescription(method, url, headers, body);
+            responseOutput.textContent = '请求中…';
+            showStatus('请求中…', '');
+
+            const buttons = Array.from(document.querySelectorAll('button[type="submit"], button[data-simple-url]'));
+            buttons.forEach(function (button) { button.disabled = true; });
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: body === undefined ? undefined : JSON.stringify(body)
+                });
+                const contentType = response.headers.get('content-type') || '';
+                const responseBody = contentType.includes('application/json')
+                    ? await response.json()
+                    : await response.text();
+
+                responseOutput.textContent = 'HTTP ' + response.status + ' ' + response.statusText + '\n\n' + pretty(responseBody);
+                showStatus(response.ok ? '服务响应正常' : '服务返回错误', response.ok ? 'success' : 'error');
+            } catch (error) {
+                responseOutput.textContent = '请求失败\n\n' + (error && error.message ? error.message : String(error));
+                showStatus('无法连接服务', 'error');
+            } finally {
+                buttons.forEach(function (button) { button.disabled = false; });
+            }
+        }
+
+        document.querySelectorAll('[data-simple-url]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                callApi('GET', button.dataset.simpleUrl);
+            });
+        });
+
+        document.getElementById('query-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const form = new FormData(event.currentTarget);
+            const params = new URLSearchParams();
+            ['name', 'page', 'keyword'].forEach(function (key) {
+                const value = String(form.get(key) || '').trim();
+                if (value) { params.set(key, value); }
+            });
+            callApi('GET', '/api/demo/query?' + params.toString());
+        });
+
+        document.getElementById('path-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const id = String(new FormData(event.currentTarget).get('id')).trim();
+            callApi('GET', '/api/demo/files/' + encodeURIComponent(id));
+        });
+
+        document.getElementById('body-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const form = new FormData(event.currentTarget);
+            callApi('POST', '/api/demo/folders', {
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    name: String(form.get('name')).trim(),
+                    parentId: Number(form.get('parentId'))
+                }
+            });
+        });
+
+        document.getElementById('header-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const clientName = String(new FormData(event.currentTarget).get('clientName') || '').trim();
+            const headers = clientName ? { 'X-Client-Name': clientName } : {};
+            callApi('GET', '/api/demo/header', { headers: headers });
+        });
+
+        clearButton.addEventListener('click', function () {
+            requestOutput.textContent = '选择左侧任意接口，然后点击“发送请求”。';
+            responseOutput.textContent = '等待响应…';
+            showStatus('等待调用', '');
+        });
+    }());
+</script>
+</body>
+</html>
