@@ -13,16 +13,3 @@ public class WelcomeData {
         return text;
     }
 }
-
-class WelcomeData2 {
-
-    private final String text;
-
-    public WelcomeData2(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
-}
