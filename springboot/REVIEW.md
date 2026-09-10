@@ -193,3 +193,91 @@ POST /api/folders
 ```
 
 先只在内存中返回创建结果；之后再学习校验、异常处理、数据库与真正的文件存储。
+
+## 12. 夸克网盘代理和 React 页面速查
+
+本次新增代码位于：
+
+```text
+/Users/song/study/java-study/springboot/src/main/java/com/clouddrive/quark
+/Users/song/study/java-study/frontend
+```
+
+### 启动
+
+```bash
+# 终端一：Java 后端
+cd /Users/song/study/java-study/springboot
+export QUARK_COOKIE='你的夸克 Cookie'   # 也可以不设置，改在页面输入
+mvn spring-boot:run
+
+# 终端二：前端开发模式（可选）
+cd /Users/song/study/java-study/frontend
+npm install
+npm run dev
+```
+
+- 生产页面：`http://localhost:8080/`
+- React 开发页面：`http://localhost:5173/`
+- 页面输入的 Cookie 通过 `X-Quark-Cookie` 发送给本机 Java 代理。
+- 没有请求头时，后端回退读取 `QUARK_COOKIE`。
+
+### 分层怎么理解
+
+```text
+React 页面
+  ↓ fetch /api/quark/...
+Controller    解析本地 HTTP 参数、读取 X-Quark-Cookie
+  ↓
+Service       组装夸克接口需要的 path/query/body
+  ↓
+QuarkApiClient 统一处理 URL、公共 query、浏览器请求头、Cookie、RestTemplate
+  ↓
+夸克上游 API
+```
+
+- `controller` 是本地代理的入口，不直接写大量上游参数细节。
+- `service` 知道某个业务要调用哪个上游路径，以及请求体字段怎么组装。
+- `dto` 用来接收前端 JSON，例如新建文件夹、删除文件、创建分享。
+- `client` 是公共 HTTP 客户端，集中处理重复的请求头和 Cookie。
+- 代理接口大多原样返回夸克 JSON，方便观察真实响应字段。
+
+### 当前可用代理接口
+
+文件：
+
+```text
+GET  /api/quark/files
+GET  /api/quark/files/{fid}
+POST /api/quark/files/folders
+POST /api/quark/files/delete
+POST /api/quark/files/rename
+GET  /api/quark/files/search
+GET  /api/quark/files/tree
+POST /api/quark/files/move
+GET  /api/quark/tasks/{taskId}
+POST /api/quark/files/download
+```
+
+分享和认证：
+
+```text
+POST   /api/quark/shares
+POST   /api/quark/shares/url
+GET    /api/quark/shares
+DELETE /api/quark/shares
+POST   /api/quark/share-page/token
+GET    /api/quark/share-page/files
+POST   /api/quark/share-page/save
+GET    /api/quark/auth/qrcode
+GET    /api/quark/auth/qrcode/status
+GET    /api/quark/auth/session
+```
+
+### 为什么上传还没做
+
+上传涉及本地 MD5/SHA1、预上传、OSS/PDS 签名、4MB 分片 PUT、ETag、XML 合并和完成通知，不是简单的一个 Controller。当前先完成浏览、操作、分享、下载直链和认证流程；上传作为下一步练习单独实现。
+
+### 安全
+
+这是非官方逆向接口代理。Cookie 是账号权限凭证，不要提交 Git、不要复制给别人；不要把日志级别开得过高以免打印 ticket 或用户信息。

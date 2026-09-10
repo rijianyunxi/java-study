@@ -11,3 +11,7 @@
 # Java compilation and local logs
 *.class
 *.log
+
+# React dependencies and local build output
+frontend/node_modules/
+frontend/dist/

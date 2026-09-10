@@ -4,6 +4,14 @@ spring:
   profiles:
     active: dev
 
+# 夸克网盘代理配置。不要把真实 Cookie 提交到 Git。
+# 运行前可执行：export QUARK_COOKIE='主账号Cookie字符串'
+quark:
+  api-base-url: https://drive-pc.quark.cn/1/clouddrive
+  share-base-url: https://drive.quark.cn/1/clouddrive
+  auth-base-url: https://uop.quark.cn
+  cookie: ${QUARK_COOKIE:}
+
 logging:
   level:
     root: info

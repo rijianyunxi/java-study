@@ -1,6 +1,14 @@
 # CloudDrive 网盘后端服务
 
-CloudDrive 是计划用于网盘业务的后端项目，目前完成基础框架和示例接口，尚未实现文件上传、下载、目录管理或用户认证。
+CloudDrive 是一个用于学习 Spring Boot 2.x 的网盘后端项目。除了原来的 Java/Spring 基础示例，现在还增加了：
+
+- 基于 `/Users/song/Desktop/夸克网盘接口文档.md` 的夸克网盘本地代理接口；
+- React + Vite 管理页面，构建后由 Spring Boot 的 `static` 目录提供；
+- 文件列表、详情、创建文件夹、删除、重命名、搜索、目录树、移动、任务查询、下载直链；
+- 分享管理、分享页浏览、转存接口；
+- 夸克扫码登录的二维码、状态轮询和 Cookie 换取流程。
+
+上传的 PDS/OSS 分片流程暂未接入 Java 版本，文档和页面会明确标注这一点，避免把未完成的功能当成已实现功能。
 
 ## 项目标识
 
@@ -581,24 +589,17 @@ String clientName
 mvn test
 ```
 
-会验证四类参数解析，以及原有欢迎、帖子接口。当前共 6 个测试方法。
+会验证四类参数解析，以及原有欢迎、帖子接口。当前共 8 个测试方法，其中 2 个用于验证夸克代理 Controller。
 
-## 11. 浏览器接口测试页面
+## 11. 浏览器页面和接口测试
 
-项目内置了不依赖 React、Vue 或额外 npm 安装的静态测试页面：
-
-```text
-src/main/resources/static/index.html
-```
-
-启动服务后，浏览器访问：
+项目原来有一个不依赖前端框架的静态参数解析测试页。现在 `static/index.html` 由 React + Vite 构建产物提供，启动服务后访问：
 
 ```text
 http://localhost:8080/
 ```
 
-页面由 Spring Boot 直接提供，和 API 同源，因此浏览器可以直接调用 `/api/...` 接口，不需要额外配置 CORS。
-它支持调用：
+React 页面包含夸克网盘文件、搜索、分享、分享页和扫码登录面板；旧的 Spring Boot 学习接口仍然保留，可以直接访问：
 
 - `GET /api/hello`：欢迎接口。
 - `GET /api/list`：帖子列表。
@@ -607,4 +608,124 @@ http://localhost:8080/
 - `POST /api/demo/folders`：`@RequestBody` JSON 请求体。
 - `GET /api/demo/header`：`@RequestHeader` 请求头。
 
-页面右侧会显示实际发出的 URL、请求头、JSON 请求体及服务端响应。它是本地学习和调试工具，当前并未实现登录或访问控制，不能直接当作生产管理后台。
+生产构建后的页面和 API 同源，不需要额外配置 CORS；React 开发服务器 `5173` 调用 `8080` 时，由 `CorsConfig` 和 Vite 代理处理跨域。
+
+## 12. 夸克网盘代理与 React 页面
+
+### 12.1 目录结构
+
+```text
+/Users/song/study/java-study
+├── frontend/                         # React + Vite 前端源码
+│   ├── src/main.jsx                  # 页面和 API 调用
+│   ├── src/styles.css                # 页面样式
+│   └── vite.config.js                # 开发代理和生产输出目录
+└── springboot/
+    ├── src/main/java/com/clouddrive/quark/
+    │   ├── client/                   # 调用夸克上游 HTTP 接口
+    │   ├── config/                   # 地址、Cookie、RestTemplate、CORS
+    │   ├── controller/               # 本地 HTTP 代理入口
+    │   ├── dto/                      # 请求 JSON 对象
+    │   ├── service/                  # 组装上游参数和业务流程
+    │   └── exception/                # 代理异常统一响应
+    └── src/main/resources/static/    # React 构建产物，由 Spring Boot 直接提供
+```
+
+这里仍然按“业务模块 + controller/service/dto”理解：`quark` 是一个业务模块，里面再按职责分包。
+
+### 12.2 启动后端
+
+夸克接口需要 Cookie。推荐只在当前终端设置环境变量，不要写进 Java 源码：
+
+```bash
+cd /Users/song/study/java-study/springboot
+export QUARK_COOKIE='你的夸克 Cookie'
+mvn spring-boot:run
+```
+
+浏览器访问：
+
+```text
+http://localhost:8080/
+```
+
+也可以不设置环境变量，直接在 React 页面顶部输入 Cookie。页面会保存到当前浏览器的 `localStorage`，仅用于给本地后端发送 `X-Quark-Cookie` 请求头。
+
+### 12.3 开发 React 页面
+
+如果你需要边改边看页面，另开一个终端：
+
+```bash
+cd /Users/song/study/java-study/frontend
+npm install
+npm run dev
+```
+
+访问 `http://localhost:5173/`。Vite 会把 `/api` 请求代理到 `http://127.0.0.1:8080`。
+
+开发完成后构建到 Spring Boot：
+
+```bash
+npm run build
+```
+
+构建结果会写入：
+
+```text
+/Users/song/study/java-study/springboot/src/main/resources/static
+```
+
+因此以后运行 Spring Boot 后，直接打开 `http://localhost:8080/` 就能看到 React 页面。
+
+### 12.4 本地代理接口
+
+| 方法 | 本地路径 | 作用 |
+| --- | --- | --- |
+| GET | `/api/quark/files` | 文件列表 |
+| GET | `/api/quark/files/{fid}` | 文件详情 |
+| POST | `/api/quark/files/folders` | 创建文件夹 |
+| POST | `/api/quark/files/delete` | 删除文件 |
+| POST | `/api/quark/files/rename` | 重命名 |
+| GET | `/api/quark/files/search` | 搜索 |
+| GET | `/api/quark/files/tree` | 目录树 |
+| POST | `/api/quark/files/move` | 移动 |
+| GET | `/api/quark/tasks/{taskId}` | 查询异步任务 |
+| POST | `/api/quark/files/download` | 获取下载直链 |
+| POST | `/api/quark/shares` | 创建分享 |
+| POST | `/api/quark/shares/url` | 获取分享链接 |
+| GET | `/api/quark/shares` | 我的分享列表 |
+| DELETE | `/api/quark/shares` | 删除分享 |
+| POST | `/api/quark/share-page/token` | 获取分享页 Token |
+| GET | `/api/quark/share-page/files` | 浏览分享内容 |
+| POST | `/api/quark/share-page/save` | 转存分享内容 |
+| GET | `/api/quark/auth/qrcode` | 获取扫码二维码信息 |
+| GET | `/api/quark/auth/qrcode/status` | 轮询扫码状态 |
+| GET | `/api/quark/auth/session` | 用 service ticket 换 Cookie |
+
+文件、分享接口的响应体保持夸克上游 JSON，便于 React 页面查看真实字段；本地代理本身不重新包一层 `ApiResponse`。
+
+所有需要登录态的本地请求都可以带：
+
+```http
+X-Quark-Cookie: 你的夸克 Cookie
+```
+
+如果没有这个请求头，Java 会回退到 `QUARK_COOKIE` 环境变量。
+
+### 12.5 上传为什么暂未实现
+
+文档里的上传不是一个普通的 `multipart/form-data` 接口，而是：
+
+1. 计算 MD5/SHA1；
+2. 调用预上传和哈希接口；
+3. 获取 PDS/OSS 签名；
+4. 按 4MB 分片 PUT 到动态存储域名；
+5. 读取 `ETag`；
+6. XML 合并分片；
+7. 调用完成上传接口。
+
+当前版本先把文件浏览、分享、下载直链和认证链路跑通。上传可以作为下一阶段单独实现，避免在还没验证 Cookie 和上游字段时误删或误传文件。
+
+### 12.6 安全提醒
+
+这是基于非官方逆向接口的学习项目，不是夸克官方 SDK。Cookie 具有账号权限；不要提交到 Git、不要放到截图或聊天记录中。接口字段可能随夸克网页改版而变化，使用前请以本地接口文档和实际上游响应为准。
