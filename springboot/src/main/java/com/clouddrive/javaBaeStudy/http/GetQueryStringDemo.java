@@ -1,4 +1,4 @@
-package com.clouddrive.common.study_demo.http;
+package com.clouddrive.javaBaeStudy.http;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -10,24 +10,27 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-/** GET：路径参数 /api/users/{id}，最后的 id 会替换 {id}。 */
-public class GetPathVariableDemo {
+/** GET：手动拼接 ?key=value&key=value 形式的 Query 参数。 */
+public class GetQueryStringDemo {
 
     private static final String BASE_URL = "http://localhost:8080";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public Map<String, Object> send(Long id, String token) {
+    public Map<String, Object> send(String keyword, int page, int size, String token) {
+        String url = BASE_URL + "/api/users?keyword=" + keyword
+                + "&page=" + page
+                + "&size=" + size;
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                BASE_URL + "/api/users/{id}",
+                url,
                 HttpMethod.GET,
                 new HttpEntity<Void>(headers),
                 new ParameterizedTypeReference<Map<String, Object>>() {
-                },
-                id
+                }
         );
 
         return response.getBody();

@@ -1,4 +1,4 @@
-package com.clouddrive.common.study_demo.http;
+package com.clouddrive.javaBaeStudy.http;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;

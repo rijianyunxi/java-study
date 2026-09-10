@@ -1,9 +1,9 @@
-package com.clouddrive.common.study_demo;
+package com.clouddrive.javaBaeStudy;
 
 
 import java.util.*;
 
-public class ObjectArray{
+public class HashMapAndList {
     public static void main(String[] args){
         Test oa = new Test("song",18);
         System.out.println(oa);
@@ -60,7 +60,7 @@ class Test {
     public Test(String name,int age){
         this.name = name;
         this.age = age;
-        System.out.println("constructor");
+        System.out.println("constructor 构造器调用了...");
     }
 
     @Override
