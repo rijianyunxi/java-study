@@ -1,4 +1,4 @@
-package com.clouddrive.post.dto;
+package com.clouddrive.example.dto;
 
 /** 列表中的一条帖子数据，仅包含帖子编号和标题。 */
 public class PostItem {

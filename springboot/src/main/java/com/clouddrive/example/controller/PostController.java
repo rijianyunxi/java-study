@@ -1,8 +1,8 @@
-package com.clouddrive.post.controller;
+package com.clouddrive.example.controller;
 
 import com.clouddrive.common.ApiResponse;
-import com.clouddrive.post.dto.PostItem;
-import com.clouddrive.post.service.PostService;
+import com.clouddrive.example.dto.PostItem;
+import com.clouddrive.example.service.PostService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

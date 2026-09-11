@@ -1,6 +1,6 @@
-package com.clouddrive.post.service;
+package com.clouddrive.example.service;
 
-import com.clouddrive.post.dto.PostItem;
+import com.clouddrive.example.dto.PostItem;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

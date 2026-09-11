@@ -1,4 +1,4 @@
-package com.clouddrive.post.controller;
+package com.clouddrive.example.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

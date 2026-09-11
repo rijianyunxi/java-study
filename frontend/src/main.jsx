@@ -286,9 +286,9 @@ function LoginPanel({ notify, onCookie }) {
         window.clearInterval(timer.current)
         setStatus('扫码成功，正在换取 Cookie…')
         const session = await api(`/api/quark/auth/session?ticket=${encodeURIComponent(ticket)}`, { raw: true })
-        const setCookie = session.headers?.get('X-Quark-Set-Cookie')
-        if (setCookie) {
-          onCookie(setCookie.split(',').map(item => item.split(';')[0]).join('; '))
+        const cookie = session.headers?.get('X-Quark-Cookie')
+        if (cookie) {
+          onCookie(cookie)
           setStatus('Cookie 已填入顶部输入框，请点击文件页刷新')
         } else {
           setStatus('扫码成功；请从响应或浏览器中复制 Cookie 到顶部')
