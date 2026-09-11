@@ -28,6 +28,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- DTO 的 @Valid、@NotBlank、@Size 等参数校验支持。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!-- 测试依赖只在测试阶段使用。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
