@@ -19,6 +19,9 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(0, true, "", data);
     }
+    public static <T> ApiResponse<T> error(T data) {
+        return new ApiResponse<>(0, false, "", data);
+    }
 
     public int getStatus() {
         return status;

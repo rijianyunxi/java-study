@@ -1,15 +1,16 @@
 package com.clouddrive.example.service;
 
 import com.clouddrive.example.dto.PostItem;
+import com.clouddrive.example.dto.PostDetail;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /** 帖子业务层：目前返回固定示例数据，不请求外部网站或数据库。 */
 @Service
 public class PostService {
-
     public List<PostItem> listPosts() {
         // id 取自链接中的帖子编号；按用户提供的顺序返回，标题不补全、不改写。
         return Arrays.asList(
@@ -32,5 +33,8 @@ public class PostService {
                 new PostItem(1578928L, "有没有推荐的第三方电"),
                 new PostItem(1578871L, "联通29长期卡来了")
         );
+    }
+    public PostDetail postDetail(Long id){
+        return new PostDetail(id,"测试详情","2026-10-08");
     }
 }
