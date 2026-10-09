@@ -9,3 +9,5 @@
 .vscode/
 .DS_Store
 *.log
+# Local database credentials (never commit)
+/.local/

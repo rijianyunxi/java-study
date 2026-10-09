@@ -1,3 +1,17 @@
 server:
   address: 127.0.0.1
   port: 3000
+
+spring:
+  config:
+    import: "optional:file:./.local/application-dev.yml"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "jdbc:mysql://127.0.0.1:3306/study?serverTimezone=Asia/Shanghai"
+    username: root
+    password: ${DB_PASSWORD:}
+
+mybatis-plus:
+  configuration:
+    # 数据库的下划线字段名与 Java 驼峰属性对应
+    map-underscore-to-camel-case: true
