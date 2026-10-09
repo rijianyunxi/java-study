@@ -1,0 +1,44 @@
+@baseUrl = http://127.0.0.1:3000
+@newUserId = 6
+
+### 列表
+GET {{baseUrl}}/api/users
+
+### 详情
+GET {{baseUrl}}/api/users/1
+
+### 新增（ID 非自增，需要手动传；若 6 已存在，请改上面的 newUserId）
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "id": {{newUserId}},
+  "name": "Alice",
+  "age": 22,
+  "email": "alice@example.com"
+}
+
+### 修改基本资料（必须包含 name、age、email，不包含 status）
+PUT {{baseUrl}}/api/users/{{newUserId}}
+Content-Type: application/json
+
+{
+  "name": "Alice Updated",
+  "age": 23,
+  "email": "alice.updated@example.com"
+}
+
+### 单独禁用用户（其他字段保持不变）
+PATCH {{baseUrl}}/api/users/{{newUserId}}/status
+Content-Type: application/json
+
+{ "status": 0 }
+
+### 单独启用用户
+PATCH {{baseUrl}}/api/users/{{newUserId}}/status
+Content-Type: application/json
+
+{ "status": 1 }
+
+### 验证修改后的详情
+GET {{baseUrl}}/api/users/{{newUserId}}

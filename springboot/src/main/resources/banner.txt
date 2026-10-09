@@ -1,12 +1,8 @@
 ${AnsiColor.CYAN}
-   ____ _                 _   ____       _
-  / ___| | ___  _   _  __| | |  _ \ _ __(_)_   _____
- | |   | |/ _ \| | | |/ _` | | | | | '__| \ \ / / _ \
- | |___| | (_) | |_| | (_| | | |_| | |  | |\ V /  __/
-  \____|_|\___/ \__,_|\__,_| |____/|_|  |_| \_/ \___|
+  =============================
+           Study Server
+  =============================
 ${AnsiColor.DEFAULT}
- :: Cloud Drive Server ::
-
  Application : ${spring.application.name}
  Spring Boot : ${spring-boot.version}
  Java        : ${java.version}
